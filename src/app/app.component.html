@@ -1,2 +1,48 @@
-<input type="file" accept="text/xml" (change)="handleFileInput($event.target.files)"><br>
-<angular2csv [data]="data" filename="ixon" [options]="options"></angular2csv>
+<div class="items">
+   <h1>OPC UA XML convertor</h1>
+   <input  #file style="display: none;" type="file" accept="text/xml" (change)="handleFileInput($event.target.files)">
+   <p>Choose you're XML file
+      <button mat-raised-button color="primary" (click)="file.click()">Upload file</button>
+   </p>
+   <div *ngIf="fileIsUploaded">
+   <div class="table">
+      <table mat-table [dataSource]="data" class="mat-elevation-z8">
+         <ng-container matColumnDef="Name">
+            <th mat-header-cell *matHeaderCellDef> Name </th>
+            <td mat-cell *matCellDef="let element"> {{element.Name}} </td>
+         </ng-container>
+         <ng-container matColumnDef="Address">
+            <th mat-header-cell *matHeaderCellDef> Address </th>
+            <td mat-cell *matCellDef="let element"> {{element.Address}} </td>
+         </ng-container>
+         <ng-container matColumnDef="Type">
+            <th mat-header-cell *matHeaderCellDef> Type </th>
+            <td mat-cell *matCellDef="let element"> {{element.Type}} </td>
+         </ng-container>
+         <ng-container matColumnDef="Width">
+            <th mat-header-cell *matHeaderCellDef> Width </th>
+            <td mat-cell *matCellDef="let element"> {{element.Width}} </td>
+         </ng-container>
+         <ng-container matColumnDef="Signed">
+            <th mat-header-cell *matHeaderCellDef> Signed </th>
+            <td mat-cell *matCellDef="let element"> {{element.Signed}} </td>
+         </ng-container>
+         <ng-container matColumnDef="Max string length">
+            <th mat-header-cell *matHeaderCellDef> Max string length </th>
+            <td mat-cell *matCellDef="let element"> {{element.Maxstringlength}} </td>
+         </ng-container>
+         <ng-container matColumnDef="Factor">
+            <th mat-header-cell *matHeaderCellDef> Factor </th>
+            <td mat-cell *matCellDef="let element"> {{element.Factor}} </td>
+         </ng-container>
+         <ng-container matColumnDef="Unit">
+            <th mat-header-cell *matHeaderCellDef> Unit </th>
+            <td mat-cell *matCellDef="let element"> {{element.Unit}} </td>
+         </ng-container>
+         <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+         <tr mat-row *matRowDef="let row; columns: columnsToDisplay"></tr>
+      </table>
+   </div>
+   <button mat-raised-button color="primary" class="download-btn" (click)="Download()">Download as IXON source CSV</button>
+   </div>
+</div>

@@ -1,21 +1,37 @@
 import { Component } from '@angular/core';
 import { NgxXml2jsonService } from 'ngx-xml2json';
+import { Angular5Csv } from 'angular5-csv/dist/Angular5-csv';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
+
 export class AppComponent {
   
   title = 'XMLtoCSV';
 
+  fileIsUploaded: boolean = false
+
   // uploaded file
   file: any
-  constructor(private ngxXml2json: NgxXml2jsonService){}
-
+  
   //data exported to the csv
   data:any[] = []
+
+  columnsToDisplay = [
+    "Name",
+    "Address",
+    "Type",
+    "Width",
+    "Signed",
+    "Max string length",
+    "Factor",
+    "Unit"
+  ];
+
+  constructor(private ngxXml2json: NgxXml2jsonService){}
 
   handleFileInput(evt){
     this.file = evt[0]
@@ -40,29 +56,25 @@ export class AppComponent {
     
     //set the name
     for (let i = 0; i < json.Symbolconfiguration.NodeList.Node.Node.Node.length; i++) {
-      this.data[i] = {"Name": json.Symbolconfiguration.NodeList.Node.Node.Node[i][attributes].name}
+      this.data[i] = {Name: json.Symbolconfiguration.NodeList.Node.Node.Node[i][attributes].name}
       this.data[i].Address = `ns=4;s=|var|3231C.${json.Symbolconfiguration.NodeList.Node[attributes].name}.${json.Symbolconfiguration.NodeList.Node.Node[attributes].name}.${json.Symbolconfiguration.NodeList.Node.Node.Node[i][attributes].name}`
-      this.data[i].Signed = ""
-      this.data[i].Maxstringlength = ""
-      this.data[i].Factor = ""
-      this.data[i].Unit = ""
-      this.lenzeToIxon(i, json.Symbolconfiguration.NodeList.Node.Node.Node[i][attributes].type)   
+      this.lenzeToIxon(i, json.Symbolconfiguration.NodeList.Node.Node.Node[i][attributes].type)
     }
+    this.fileIsUploaded = true
+    console.log(this.data);
+    
   }
 
   lenzeToIxon(i, data){
     switch (data) {
       case "T_BOOL":
       this.data[i].Type = "bool"
-      this.data[i].Width = ""
         break;
       case "T_BYTE":
       this.data[i].Type = "int"
       this.data[i].Width = 8
         break;
       case "T_DINT":
-      this.data[i].Type = ""
-      this.data[i].Width = ""
         break;
       case "T_INT":
       this.data[i].Type = "int"
@@ -82,7 +94,6 @@ export class AppComponent {
         break;
       case "T_TIME":
       this.data[i].Type = "niet ondersteund"
-      this.data[i].Width = ""
         break;
       case "T_UINT":
       this.data[i].Type = "int"
@@ -119,16 +130,9 @@ export class AppComponent {
     ],
     showTitle: false,
     useBom: false,
-    removeNewLines: true,
-    keys: [
-      "Name",
-      "Address",
-      "Type",
-      "Width",
-      "Signed",
-      "Maxstringlength",
-      "Factor",
-      "Unit"
-     ]
+    nullToEmptyString: true
   };
+  Download(){
+    new Angular5Csv(this.data, "IXON", this.options)
+  }
 }

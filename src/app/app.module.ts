@@ -1,9 +1,11 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
-import { AppComponent } from './app.component';
+// Material imports
+import {MatButtonModule, MatTableModule} from '@angular/material';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
-import { Angular2CsvModule } from 'angular2-csv';
+import { AppComponent } from './app.component';
 
 @NgModule({
   declarations: [
@@ -11,7 +13,9 @@ import { Angular2CsvModule } from 'angular2-csv';
   ],
   imports: [
     BrowserModule,
-    Angular2CsvModule
+    NoopAnimationsModule,
+    MatButtonModule,
+    MatTableModule
   ],
   providers: [],
   bootstrap: [AppComponent]

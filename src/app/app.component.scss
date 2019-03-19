@@ -1,11 +1,16 @@
-/deep/ angular2csv > button {
-    color: transparent;  /* hides 'download' label */
-    line-height: 0;      /* Collapse the original line */
+.items {
+    text-align: center;
+    left: 0;
+    right: 0;
+    margin: auto;
+    .table{
+        text-align: left;
+        display:flex;
+        justify-content:center;
+    }
+    .download-btn{
+        margin-top: 2rem;
+        margin-bottom: 3rem;
+    }
 }
-  
-/deep/ angular2csv > button::after {
-    content: "Download as IXON datasource CSV";   /* new button label */
-    color: #333333;             /* color so we can see it */
-    display: block;
-    line-height: initial;       /* New content takes up original line height */
-}
+    
