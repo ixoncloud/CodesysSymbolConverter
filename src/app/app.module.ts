@@ -3,12 +3,15 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 
+import { Angular2CsvModule } from 'angular2-csv';
+
 @NgModule({
   declarations: [
     AppComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    Angular2CsvModule
   ],
   providers: [],
   bootstrap: [AppComponent]
