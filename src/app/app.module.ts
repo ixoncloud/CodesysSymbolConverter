@@ -2,10 +2,12 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 // Material imports
-import {MatButtonModule, MatTableModule} from '@angular/material';
+import {MatButtonModule, MatTableModule,MatInputModule,MatFormFieldModule,MatSelectModule} from '@angular/material';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppComponent } from './app.component';
+
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -15,7 +17,11 @@ import { AppComponent } from './app.component';
     BrowserModule,
     NoopAnimationsModule,
     MatButtonModule,
-    MatTableModule
+    MatTableModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

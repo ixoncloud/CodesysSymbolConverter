@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
 import { NgxXml2jsonService } from 'ngx-xml2json';
 import { Angular5Csv } from 'angular5-csv/dist/Angular5-csv';
 
@@ -18,10 +19,15 @@ export class AppComponent {
   file: any
   
   //data exported to the csv
-  data:any[] = []
+  data:any[] = [
+
+  ]
 
   columnsToDisplay = [
     "Name",
+    "Namespace",
+    "IdentifierType",
+    "Identifier",
     "Address",
     "Type",
     "Width",
@@ -31,7 +37,16 @@ export class AppComponent {
     "Unit"
   ];
 
-  constructor(private ngxXml2json: NgxXml2jsonService){}
+  Address:any
+
+  constructor(private ngxXml2json: NgxXml2jsonService, private fb: FormBuilder){
+    //create form values
+    this.Address = fb.group({
+      'Namespace':[4],
+      'IdentifierType':["s"],
+      'Identifier':["|var|3231C"]
+    })
+  }  
 
   handleFileInput(evt){
     this.file = evt[0]
@@ -52,19 +67,16 @@ export class AppComponent {
 
   setData(json){
     let attributes = "@attributes"
-    console.log(json);
-    
     //set the name
     for (let i = 0; i < json.Symbolconfiguration.NodeList.Node.Node.Node.length; i++) {
       this.data[i] = {Name: json.Symbolconfiguration.NodeList.Node.Node.Node[i][attributes].name}
-      this.data[i].Address = `ns=4;s=|var|3231C.${json.Symbolconfiguration.NodeList.Node[attributes].name}.${json.Symbolconfiguration.NodeList.Node.Node[attributes].name}.${json.Symbolconfiguration.NodeList.Node.Node.Node[i][attributes].name}`
+      this.data[i].Address = `ns=${this.Address.value.Namespace};${this.Address.value.IdentifierType}=${this.Address.value.Identifier}.${json.Symbolconfiguration.NodeList.Node[attributes].name}.${json.Symbolconfiguration.NodeList.Node.Node[attributes].name}.${json.Symbolconfiguration.NodeList.Node.Node.Node[i][attributes].name}`
       this.lenzeToIxon(i, json.Symbolconfiguration.NodeList.Node.Node.Node[i][attributes].type)
     }
     this.fileIsUploaded = true
-    console.log(this.data);
-    
   }
-
+  // this needs to be better
+  // type must look to typelist and get the iecname or something
   lenzeToIxon(i, data){
     switch (data) {
       case "T_BOOL":
