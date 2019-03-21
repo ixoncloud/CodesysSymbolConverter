@@ -40,12 +40,8 @@
                  </ng-container>
                  <ng-container matColumnDef="Identifier">
                     <th mat-header-cell *matHeaderCellDef> Identifier </th>
-                    <td mat-cell *matCellDef="let element"> {{this.Address.value.Identifier}} </td>
+                    <td mat-cell *matCellDef="let element"> {{this.Address.value.Identifier}}.{{element.Address}} </td>
                  </ng-container>
-                 <ng-container matColumnDef="Address">
-                     <th mat-header-cell *matHeaderCellDef> Address </th>
-                     <td mat-cell *matCellDef="let element"> {{element.Address}} </td>
-                  </ng-container>
                  <ng-container matColumnDef="Type">
                     <th mat-header-cell *matHeaderCellDef> Type </th>
                     <td mat-cell *matCellDef="let element"> {{element.Type}} </td>

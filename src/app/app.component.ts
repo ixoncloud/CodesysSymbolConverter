@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { NgxXml2jsonService } from 'ngx-xml2json';
 import { Angular5Csv } from 'angular5-csv/dist/Angular5-csv';
 
@@ -15,6 +15,8 @@ export class AppComponent {
 
   fileIsUploaded: boolean = false
 
+  json: any
+
   // uploaded file
   file: any
   
@@ -28,7 +30,6 @@ export class AppComponent {
     "Namespace",
     "IdentifierType",
     "Identifier",
-    "Address",
     "Type",
     "Width",
     "Signed",
@@ -61,65 +62,107 @@ export class AppComponent {
   xmlToJson(xmltext){
     const parser = new DOMParser();
     const xml = parser.parseFromString(xmltext, 'text/xml');
-    const obj = this.ngxXml2json.xmlToJson(xml);
-    this.setData(obj)
+    this.json = this.ngxXml2json.xmlToJson(xml);
+    this.setData()
   }
 
-  setData(json){
+  setData(){
     let attributes = "@attributes"
+    console.log(this.json);
+    
     //set the name
-    for (let i = 0; i < json.Symbolconfiguration.NodeList.Node.Node.Node.length; i++) {
-      this.data[i] = {Name: json.Symbolconfiguration.NodeList.Node.Node.Node[i][attributes].name}
-      this.data[i].Address = `ns=${this.Address.value.Namespace};${this.Address.value.IdentifierType}=${this.Address.value.Identifier}.${json.Symbolconfiguration.NodeList.Node[attributes].name}.${json.Symbolconfiguration.NodeList.Node.Node[attributes].name}.${json.Symbolconfiguration.NodeList.Node.Node.Node[i][attributes].name}`
-      this.lenzeToIxon(i, json.Symbolconfiguration.NodeList.Node.Node.Node[i][attributes].type)
+    for (let i = 0; i < this.json.Symbolconfiguration.NodeList.Node.Node.Node.length; i++) {
+      this.data[i] = {Name: this.json.Symbolconfiguration.NodeList.Node.Node.Node[i][attributes].name}
+      this.data[i].Address = this.json.Symbolconfiguration.NodeList.Node[attributes].name + "." + this.json.Symbolconfiguration.NodeList.Node.Node[attributes].name + "." +this.json.Symbolconfiguration.NodeList.Node.Node.Node[i][attributes].name
+      this.lenzeToIxon(i, this.json.Symbolconfiguration.NodeList.Node.Node.Node[i][attributes].type)
     }
     this.fileIsUploaded = true
   }
   // this needs to be better
   // type must look to typelist and get the iecname or something
-  lenzeToIxon(i, data){
-    switch (data) {
-      case "T_BOOL":
+  lenzeToIxon(i, nodeType){
+    let attributes = "@attributes"
+    var iecname
+    switch(nodeType){
+      case this.json.Symbolconfiguration.TypeList.TypeSimple[0][attributes].name:
+      iecname = this.json.Symbolconfiguration.TypeList.TypeSimple[0][attributes].iecname
+        break;
+      case this.json.Symbolconfiguration.TypeList.TypeSimple[1][attributes].name:
+      iecname = this.json.Symbolconfiguration.TypeList.TypeSimple[1][attributes].iecname
+        break;
+      case this.json.Symbolconfiguration.TypeList.TypeSimple[2][attributes].name:
+      iecname = this.json.Symbolconfiguration.TypeList.TypeSimple[2][attributes].iecname
+        break;
+      case this.json.Symbolconfiguration.TypeList.TypeSimple[3][attributes].name:
+      iecname = this.json.Symbolconfiguration.TypeList.TypeSimple[3][attributes].iecname
+        break;
+      case this.json.Symbolconfiguration.TypeList.TypeSimple[4][attributes].name:
+      iecname = this.json.Symbolconfiguration.TypeList.TypeSimple[4][attributes].iecname
+        break;
+      case this.json.Symbolconfiguration.TypeList.TypeSimple[5][attributes].name:
+      iecname = this.json.Symbolconfiguration.TypeList.TypeSimple[5][attributes].iecname
+        break;
+      case this.json.Symbolconfiguration.TypeList.TypeSimple[6][attributes].name:
+      iecname = this.json.Symbolconfiguration.TypeList.TypeSimple[6][attributes].iecname
+        break;
+      case this.json.Symbolconfiguration.TypeList.TypeSimple[7][attributes].name:
+      iecname = this.json.Symbolconfiguration.TypeList.TypeSimple[7][attributes].iecname
+        break;
+      case this.json.Symbolconfiguration.TypeList.TypeSimple[8][attributes].name:
+      iecname = this.json.Symbolconfiguration.TypeList.TypeSimple[8][attributes].iecname
+        break;
+      case this.json.Symbolconfiguration.TypeList.TypeSimple[9][attributes].name:
+      iecname = this.json.Symbolconfiguration.TypeList.TypeSimple[9][attributes].iecname
+        break;
+      case this.json.Symbolconfiguration.TypeList.TypeUserDef[attributes].name:
+      iecname = this.json.Symbolconfiguration.TypeList.TypeUserDef[attributes].iecname
+        break;
+    }
+    switch (iecname) {
+      case "BOOL":
       this.data[i].Type = "bool"
         break;
-      case "T_BYTE":
+      case "BYTE":
       this.data[i].Type = "int"
       this.data[i].Width = 8
         break;
-      case "T_DINT":
-        break;
-      case "T_INT":
+      case "DINT":
       this.data[i].Type = "int"
       this.data[i].Width = 16
         break;
-      case "T_LREAL":
+      case "INT":
+      this.data[i].Type = "int"
+      this.data[i].Width = 16
+        break;
+      case "LREAL":
       this.data[i].Type = "float"
       this.data[i].Width = 64
         break;
-      case "T_REAL":
+      case "REAL":
       this.data[i].Type = "float"
       this.data[i].Width = 32
         break;
-      case "T_STRING_60_":
+      case "STRING(60)":
       this.data[i].Type = "float"
       this.data[i].Width = 64
         break;
-      case "T_TIME":
+      case "TIME":
       this.data[i].Type = "niet ondersteund"
         break;
-      case "T_UINT":
-      this.data[i].Type = "int"
+      case "UINT":
+      this.data[i].Type = "Uint"
       this.data[i].Width = 16
         break;
-      case "T_WORD":
-      this.data[i].Type = "int"
+      case "WORD":
+      this.data[i].Type = "Uint"
       this.data[i].Width = 16
         break;
-      case "T_OperationMode":
+      case "OperationMode":
       this.data[i].Type = "int"
       this.data[i].Width = 16
         break;
       default:
+      window.alert("Error: Unknown variable found")
         break;
     }
   }
@@ -145,6 +188,12 @@ export class AppComponent {
     nullToEmptyString: true
   };
   Download(){
+    // create the address before the download
+    let attributes = "@attributes"
+
+    for (let i = 0; i < this.json.Symbolconfiguration.NodeList.Node.Node.Node.length; i++) {
+      this.data[i].Address = `ns=${this.Address.value.Namespace};${this.Address.value.IdentifierType}=${this.Address.value.Identifier}.${this.json.Symbolconfiguration.NodeList.Node[attributes].name}.${this.json.Symbolconfiguration.NodeList.Node.Node[attributes].name}.${this.json.Symbolconfiguration.NodeList.Node.Node.Node[i][attributes].name}`
+    }
     new Angular5Csv(this.data, "IXON", this.options)
   }
 }
