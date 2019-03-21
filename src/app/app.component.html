@@ -1,7 +1,7 @@
 <div class="items">
-        <h1>OPC UA XML convertor</h1>
+        <h1> Codesys Symbol file convertor</h1>
         <input  #file style="display: none;" type="file" accept="text/xml" (change)="handleFileInput($event.target.files)">
-        <p>Choose you're XML file
+        <p>Select Codesys Symbol file
            <button mat-raised-button color="primary" (click)="file.click()">Upload file</button>
         </p>
 
@@ -19,7 +19,7 @@
             </mat-select>
            </mat-form-field>
            <mat-form-field appearance="outline">
-               <mat-label>Identifier index</mat-label>
+               <mat-label>Identifier Prefix</mat-label>
               <input matInput formControlName="Identifier">
            </mat-form-field>
         </form>
@@ -39,7 +39,7 @@
                     <td mat-cell *matCellDef="let element"> {{this.Address.value.IdentifierType}} </td>
                  </ng-container>
                  <ng-container matColumnDef="Identifier">
-                    <th mat-header-cell *matHeaderCellDef> Identifier </th>
+                    <th mat-header-cell *matHeaderCellDef> Identifier Prefix</th>
                     <td mat-cell *matCellDef="let element"> {{this.Address.value.Identifier}}.{{element.Address}} </td>
                  </ng-container>
                  <ng-container matColumnDef="Type">
@@ -56,20 +56,12 @@
                  </ng-container>
                  <ng-container matColumnDef="Max string length">
                     <th mat-header-cell *matHeaderCellDef> Max string length </th>
-                    <td mat-cell *matCellDef="let element"> {{element.Maxstringlength}} </td>
-                 </ng-container>
-                 <ng-container matColumnDef="Factor">
-                    <th mat-header-cell *matHeaderCellDef> Factor </th>
-                    <td mat-cell *matCellDef="let element"> {{element.Factor}} </td>
-                 </ng-container>
-                 <ng-container matColumnDef="Unit">
-                    <th mat-header-cell *matHeaderCellDef> Unit </th>
-                    <td mat-cell *matCellDef="let element"> {{element.Unit}} </td>
+                    <td mat-cell *matCellDef="let element"> {{element.MaxStringLength}} </td>
                  </ng-container>
                  <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
                  <tr mat-row *matRowDef="let row; columns: columnsToDisplay"></tr>
               </table>
            </div>
-           <button mat-raised-button color="primary" class="download-btn" (click)="Download()">Download as IXON source CSV</button>
+           <button mat-raised-button color="primary" class="download-btn" (click)="Download()">Get as IXON source</button>
         </div>
      </div>

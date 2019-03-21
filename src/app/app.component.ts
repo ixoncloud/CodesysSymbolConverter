@@ -10,8 +10,6 @@ import { Angular5Csv } from 'angular5-csv/dist/Angular5-csv';
 })
 
 export class AppComponent {
-  
-  title = 'XMLtoCSV';
 
   fileIsUploaded: boolean = false
 
@@ -34,8 +32,6 @@ export class AppComponent {
     "Width",
     "Signed",
     "Max string length",
-    "Factor",
-    "Unit"
   ];
 
   Address:any
@@ -121,18 +117,22 @@ export class AppComponent {
     switch (iecname) {
       case "BOOL":
       this.data[i].Type = "bool"
+      this.data[i].Width = ""
         break;
       case "BYTE":
       this.data[i].Type = "int"
       this.data[i].Width = 8
+      this.data[i].Signed = "TRUE"
         break;
       case "DINT":
       this.data[i].Type = "int"
-      this.data[i].Width = 16
+      this.data[i].Width = 32
+      this.data[i].Signed = "TRUE"
         break;
       case "INT":
       this.data[i].Type = "int"
       this.data[i].Width = 16
+      this.data[i].Signed = "TRUE"
         break;
       case "LREAL":
       this.data[i].Type = "float"
@@ -143,23 +143,29 @@ export class AppComponent {
       this.data[i].Width = 32
         break;
       case "STRING(60)":
-      this.data[i].Type = "float"
-      this.data[i].Width = 64
+      this.data[i].Type = "str"
+      this.data[i].Width = ""
+      this.data[i].Signed = ""
+      this.data[i].MaxStringLength = 60
         break;
       case "TIME":
-      this.data[i].Type = "niet ondersteund"
+      // wordt niet ondersteund dus ook niet geexporteerd
+      this.data[i].Type = "Not supported"
         break;
       case "UINT":
-      this.data[i].Type = "Uint"
+      this.data[i].Type = "int"
       this.data[i].Width = 16
+      this.data[i].Signed = "FALSE"
         break;
       case "WORD":
-      this.data[i].Type = "Uint"
+      this.data[i].Type = "int"
       this.data[i].Width = 16
+      this.data[i].Signed = "FALSE"
         break;
       case "OperationMode":
       this.data[i].Type = "int"
       this.data[i].Width = 16
+      this.data[i].Signed = "TRUE"
         break;
       default:
       window.alert("Error: Unknown variable found")
@@ -180,8 +186,6 @@ export class AppComponent {
       "Width",
       "Signed",
       "Max string length",
-      "Factor",
-      "Unit"
     ],
     showTitle: false,
     useBom: false,
@@ -190,10 +194,15 @@ export class AppComponent {
   Download(){
     // create the address before the download
     let attributes = "@attributes"
-
     for (let i = 0; i < this.json.Symbolconfiguration.NodeList.Node.Node.Node.length; i++) {
+      this.data[i].Unit = ""
       this.data[i].Address = `ns=${this.Address.value.Namespace};${this.Address.value.IdentifierType}=${this.Address.value.Identifier}.${this.json.Symbolconfiguration.NodeList.Node[attributes].name}.${this.json.Symbolconfiguration.NodeList.Node.Node[attributes].name}.${this.json.Symbolconfiguration.NodeList.Node.Node.Node[i][attributes].name}`
     }
-    new Angular5Csv(this.data, "IXON", this.options)
+    for (let i = 0; i < this.data.length; i++) {
+      if (this.data[i].Type == "Not supported") {
+        this.data.splice(i,1)
+      }
+    }
+    new Angular5Csv(this.data, "IXON datasource", this.options)
   }
 }
