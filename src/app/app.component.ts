@@ -65,7 +65,7 @@ export class AppComponent {
   setData(){
     let attributes = "@attributes"
     console.log(this.json);
-    
+    this.data = []
     //set the name
     for (let i = 0; i < this.json.Symbolconfiguration.NodeList.Node.Node.Node.length; i++) {
       this.data[i] = {Name: this.json.Symbolconfiguration.NodeList.Node.Node.Node[i][attributes].name}
@@ -74,8 +74,7 @@ export class AppComponent {
     }
     this.fileIsUploaded = true
   }
-  // this needs to be better
-  // type must look to typelist and get the iecname or something
+  // We need the iecname so we search for it by name
   lenzeToIxon(i, nodeType){
     let attributes = "@attributes"
     var iecname
@@ -193,16 +192,19 @@ export class AppComponent {
   };
   Download(){
     // create the address before the download
+    let CSVfile = this.data.map(a => Object.assign({}, a))
+    console.log(CSVfile);
+    
     let attributes = "@attributes"
     for (let i = 0; i < this.json.Symbolconfiguration.NodeList.Node.Node.Node.length; i++) {
-      this.data[i].Unit = ""
-      this.data[i].Address = `ns=${this.Address.value.Namespace};${this.Address.value.IdentifierType}=${this.Address.value.Identifier}.${this.json.Symbolconfiguration.NodeList.Node[attributes].name}.${this.json.Symbolconfiguration.NodeList.Node.Node[attributes].name}.${this.json.Symbolconfiguration.NodeList.Node.Node.Node[i][attributes].name}`
+      CSVfile[i].Unit = ""
+      CSVfile[i].Address = `ns=${this.Address.value.Namespace};${this.Address.value.IdentifierType}=${this.Address.value.Identifier}.${this.json.Symbolconfiguration.NodeList.Node[attributes].name}.${this.json.Symbolconfiguration.NodeList.Node.Node[attributes].name}.${this.json.Symbolconfiguration.NodeList.Node.Node.Node[i][attributes].name}`
     }
-    for (let i = 0; i < this.data.length; i++) {
-      if (this.data[i].Type == "Not supported") {
-        this.data.splice(i,1)
+    for (let i = 0; i < CSVfile.length; i++) {
+      if (CSVfile[i].Type == "Not supported") {
+        CSVfile.splice(i,1)
       }
     }
-    new Angular5Csv(this.data, "IXON datasource", this.options)
+    new Angular5Csv(CSVfile, "IXON datasource", this.options)
   }
 }
