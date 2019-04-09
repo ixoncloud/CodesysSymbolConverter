@@ -64,55 +64,38 @@ export class AppComponent {
 
   setData(){
     let attributes = "@attributes"
-    console.log(this.json);
     this.data = []
     //set the name
-    for (let i = 0; i < this.json.Symbolconfiguration.NodeList.Node.Node.Node.length; i++) {
-      this.data[i] = {Name: this.json.Symbolconfiguration.NodeList.Node.Node.Node[i][attributes].name}
-      this.data[i].Address = this.json.Symbolconfiguration.NodeList.Node[attributes].name + "." + this.json.Symbolconfiguration.NodeList.Node.Node[attributes].name + "." +this.json.Symbolconfiguration.NodeList.Node.Node.Node[i][attributes].name
-      this.lenzeToIxon(i, this.json.Symbolconfiguration.NodeList.Node.Node.Node[i][attributes].type)
+    console.log(this.json);
+    if (this.json.Symbolconfiguration.NodeList.Node.Node instanceof Array) {
+      for (let n = 0; n < this.json.Symbolconfiguration.NodeList.Node.Node.length; n++) {
+        for (let i = 0; i < this.json.Symbolconfiguration.NodeList.Node.Node[n].Node.length; i++) {
+          this.data[i] = {Name: this.json.Symbolconfiguration.NodeList.Node.Node[n].Node[i][attributes].name}
+          this.data[i].Address = this.json.Symbolconfiguration.NodeList.Node[attributes].name + "." + this.json.Symbolconfiguration.NodeList.Node.Node[n][attributes].name + "." +this.json.Symbolconfiguration.NodeList.Node.Node[n].Node[i][attributes].name
+            for (let m = 0; m < this.json.Symbolconfiguration.TypeList.TypeSimple.length; m++) {
+              if (this.json.Symbolconfiguration.NodeList.Node.Node[n].Node[i][attributes].type == this.json.Symbolconfiguration.TypeList.TypeSimple[m][attributes].name) {
+                var iecname = this.json.Symbolconfiguration.TypeList.TypeSimple[m][attributes].iecname
+              }
+            }
+          this.lenzeToIxon(i, iecname)
+        }
+      }
+    }else{
+      for (let i = 0; i < this.json.Symbolconfiguration.NodeList.Node.Node.Node.length; i++) {
+        this.data[i] = {Name: this.json.Symbolconfiguration.NodeList.Node.Node.Node[i][attributes].name}
+        this.data[i].Address = this.json.Symbolconfiguration.NodeList.Node[attributes].name + "." + this.json.Symbolconfiguration.NodeList.Node.Node[attributes].name + "." +this.json.Symbolconfiguration.NodeList.Node.Node.Node[i][attributes].name
+          for (let m = 0; m < this.json.Symbolconfiguration.TypeList.TypeSimple.length; m++) {
+            if (this.json.Symbolconfiguration.NodeList.Node.Node.Node[i][attributes].type == this.json.Symbolconfiguration.TypeList.TypeSimple[m][attributes].name) {
+              var iecname = this.json.Symbolconfiguration.TypeList.TypeSimple[m][attributes].iecname
+            }
+          }
+        this.lenzeToIxon(i, iecname)
+      }
     }
     this.fileIsUploaded = true
   }
   // We need the iecname so we search for it by name
-  lenzeToIxon(i, nodeType){
-    let attributes = "@attributes"
-    var iecname
-    switch(nodeType){
-      case this.json.Symbolconfiguration.TypeList.TypeSimple[0][attributes].name:
-      iecname = this.json.Symbolconfiguration.TypeList.TypeSimple[0][attributes].iecname
-        break;
-      case this.json.Symbolconfiguration.TypeList.TypeSimple[1][attributes].name:
-      iecname = this.json.Symbolconfiguration.TypeList.TypeSimple[1][attributes].iecname
-        break;
-      case this.json.Symbolconfiguration.TypeList.TypeSimple[2][attributes].name:
-      iecname = this.json.Symbolconfiguration.TypeList.TypeSimple[2][attributes].iecname
-        break;
-      case this.json.Symbolconfiguration.TypeList.TypeSimple[3][attributes].name:
-      iecname = this.json.Symbolconfiguration.TypeList.TypeSimple[3][attributes].iecname
-        break;
-      case this.json.Symbolconfiguration.TypeList.TypeSimple[4][attributes].name:
-      iecname = this.json.Symbolconfiguration.TypeList.TypeSimple[4][attributes].iecname
-        break;
-      case this.json.Symbolconfiguration.TypeList.TypeSimple[5][attributes].name:
-      iecname = this.json.Symbolconfiguration.TypeList.TypeSimple[5][attributes].iecname
-        break;
-      case this.json.Symbolconfiguration.TypeList.TypeSimple[6][attributes].name:
-      iecname = this.json.Symbolconfiguration.TypeList.TypeSimple[6][attributes].iecname
-        break;
-      case this.json.Symbolconfiguration.TypeList.TypeSimple[7][attributes].name:
-      iecname = this.json.Symbolconfiguration.TypeList.TypeSimple[7][attributes].iecname
-        break;
-      case this.json.Symbolconfiguration.TypeList.TypeSimple[8][attributes].name:
-      iecname = this.json.Symbolconfiguration.TypeList.TypeSimple[8][attributes].iecname
-        break;
-      case this.json.Symbolconfiguration.TypeList.TypeSimple[9][attributes].name:
-      iecname = this.json.Symbolconfiguration.TypeList.TypeSimple[9][attributes].iecname
-        break;
-      case this.json.Symbolconfiguration.TypeList.TypeUserDef[attributes].name:
-      iecname = this.json.Symbolconfiguration.TypeList.TypeUserDef[attributes].iecname
-        break;
-    }
+  lenzeToIxon(i, iecname){
     switch (iecname) {
       case "BOOL":
       this.data[i].Type = "bool"
@@ -196,9 +179,18 @@ export class AppComponent {
     console.log(CSVfile);
     
     let attributes = "@attributes"
-    for (let i = 0; i < this.json.Symbolconfiguration.NodeList.Node.Node.Node.length; i++) {
-      CSVfile[i].Unit = ""
-      CSVfile[i].Address = `ns=${this.Address.value.Namespace};${this.Address.value.IdentifierType}=${this.Address.value.Identifier}.${this.json.Symbolconfiguration.NodeList.Node[attributes].name}.${this.json.Symbolconfiguration.NodeList.Node.Node[attributes].name}.${this.json.Symbolconfiguration.NodeList.Node.Node.Node[i][attributes].name}`
+    if (this.json.Symbolconfiguration.NodeList.Node.Node instanceof Array) {
+      for (let n = 0; n < this.json.Symbolconfiguration.NodeList.Node.Node.length; n++) {
+        for (let i = 0; i < this.json.Symbolconfiguration.NodeList.Node.Node[n].Node.length; i++) {
+          CSVfile[i].Unit = ""
+          CSVfile[i].Address = `ns=${this.Address.value.Namespace};${this.Address.value.IdentifierType}=${this.Address.value.Identifier}.${this.json.Symbolconfiguration.NodeList.Node[attributes].name}.${this.json.Symbolconfiguration.NodeList.Node.Node[n][attributes].name}.${this.json.Symbolconfiguration.NodeList.Node.Node[n].Node[i][attributes].name}`
+        }
+      }
+    }else{
+      for (let i = 0; i < this.json.Symbolconfiguration.NodeList.Node.Node.Node.length; i++) {
+        CSVfile[i].Unit = ""
+        CSVfile[i].Address = `ns=${this.Address.value.Namespace};${this.Address.value.IdentifierType}=${this.Address.value.Identifier}.${this.json.Symbolconfiguration.NodeList.Node[attributes].name}.${this.json.Symbolconfiguration.NodeList.Node.Node[attributes].name}.${this.json.Symbolconfiguration.NodeList.Node.Node.Node[i][attributes].name}`
+      }
     }
     for (let i = 0; i < CSVfile.length; i++) {
       if (CSVfile[i].Type == "Not supported") {
