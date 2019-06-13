@@ -70,11 +70,20 @@ export class AppComponent {
     if (this.json.Symbolconfiguration.NodeList.Node.Node instanceof Array) {
       for (let n = 0; n < this.json.Symbolconfiguration.NodeList.Node.Node.length; n++) {
         for (let i = 0; i < this.json.Symbolconfiguration.NodeList.Node.Node[n].Node.length; i++) {
+          // Variable name
           this.data[i] = {Name: this.json.Symbolconfiguration.NodeList.Node.Node[n].Node[i][attributes].name}
+          // Variable Address
           this.data[i].Address = this.json.Symbolconfiguration.NodeList.Node[attributes].name + "." + this.json.Symbolconfiguration.NodeList.Node.Node[n][attributes].name + "." +this.json.Symbolconfiguration.NodeList.Node.Node[n].Node[i][attributes].name
+            // look for the matching name with the type
             for (let m = 0; m < this.json.Symbolconfiguration.TypeList.TypeSimple.length; m++) {
               if (this.json.Symbolconfiguration.NodeList.Node.Node[n].Node[i][attributes].type == this.json.Symbolconfiguration.TypeList.TypeSimple[m][attributes].name) {
                 var iecname = this.json.Symbolconfiguration.TypeList.TypeSimple[m][attributes].iecname
+              }else{
+                for (let x = 0; x < this.json.Symbolconfiguration.TypeList.TypeUserDef.length; x++) {
+                  if(this.json.Symbolconfiguration.NodeList.Node.Node[n].Node[i][attributes].type == this.json.Symbolconfiguration.TypeList.TypeUserDef[x][attributes].name){
+                    var iecname = this.json.Symbolconfiguration.TypeList.TypeUserDef[x][attributes].iecname
+                  }
+                } 
               }
             }
           this.lenzeToIxon(i, iecname)
@@ -84,9 +93,21 @@ export class AppComponent {
       for (let i = 0; i < this.json.Symbolconfiguration.NodeList.Node.Node.Node.length; i++) {
         this.data[i] = {Name: this.json.Symbolconfiguration.NodeList.Node.Node.Node[i][attributes].name}
         this.data[i].Address = this.json.Symbolconfiguration.NodeList.Node[attributes].name + "." + this.json.Symbolconfiguration.NodeList.Node.Node[attributes].name + "." +this.json.Symbolconfiguration.NodeList.Node.Node.Node[i][attributes].name
-          for (let m = 0; m < this.json.Symbolconfiguration.TypeList.TypeSimple.length; m++) {
-            if (this.json.Symbolconfiguration.NodeList.Node.Node.Node[i][attributes].type == this.json.Symbolconfiguration.TypeList.TypeSimple[m][attributes].name) {
-              var iecname = this.json.Symbolconfiguration.TypeList.TypeSimple[m][attributes].iecname
+          for (let g = 0; g < this.json.Symbolconfiguration.TypeList.TypeSimple.length; g++) {
+            if (this.json.Symbolconfiguration.NodeList.Node.Node.Node[i][attributes].type == this.json.Symbolconfiguration.TypeList.TypeSimple[g][attributes].name) {
+              var iecname = this.json.Symbolconfiguration.TypeList.TypeSimple[g][attributes].iecname
+            }else{
+              if (this.json.Symbolconfiguration.TypeList.TypeUserDef instanceof Array) {
+                for (let x = 0; x < this.json.Symbolconfiguration.TypeList.TypeUserDef.length; x++) {
+                  if(this.json.Symbolconfiguration.NodeList.Node.Node.Node[i][attributes].type == this.json.Symbolconfiguration.TypeList.TypeUserDef[x][attributes].name){
+                    var iecname = this.json.Symbolconfiguration.TypeList.TypeUserDef[x][attributes].iecname
+                  }
+                } 
+              }else{
+                if(this.json.Symbolconfiguration.NodeList.Node.Node.Node[i][attributes].type == this.json.Symbolconfiguration.TypeList.TypeUserDef[attributes].name){
+                  var iecname = this.json.Symbolconfiguration.TypeList.TypeUserDef[attributes].iecname
+                }
+              }
             }
           }
         this.lenzeToIxon(i, iecname)
@@ -96,6 +117,10 @@ export class AppComponent {
   }
   // We need the iecname so we search for it by name
   lenzeToIxon(i, iecname){
+    let finalNumber
+    if (iecname.substr(0, 7) == "STRING(") {
+      finalNumber = iecname.match(/\d+/)[0]
+    }
     switch (iecname) {
       case "BOOL":
       this.data[i].Type = "bool"
@@ -106,14 +131,29 @@ export class AppComponent {
       this.data[i].Width = 8
       this.data[i].Signed = "TRUE"
         break;
+      case "INT":
+      this.data[i].Type = "int"
+      this.data[i].Width = 16
+      this.data[i].Signed = "TRUE"
+        break;
+        case "ENUM":
+      this.data[i].Type = "int"
+      this.data[i].Width = 16
+      this.data[i].Signed = "TRUE"
+        break;
+        case "OperationMode":
+      this.data[i].Type = "int"
+      this.data[i].Width = 16
+      this.data[i].Signed = "TRUE"
+        break;
       case "DINT":
       this.data[i].Type = "int"
       this.data[i].Width = 32
       this.data[i].Signed = "TRUE"
         break;
-      case "INT":
+      case "LINT":
       this.data[i].Type = "int"
-      this.data[i].Width = 16
+      this.data[i].Width = 64
       this.data[i].Signed = "TRUE"
         break;
       case "LREAL":
@@ -124,19 +164,26 @@ export class AppComponent {
       this.data[i].Type = "float"
       this.data[i].Width = 32
         break;
-      case "STRING(60)":
+      case "STRING":
       this.data[i].Type = "str"
       this.data[i].Width = ""
       this.data[i].Signed = ""
-      this.data[i].MaxStringLength = 60
+      this.data[i].MaxStringLength = 255
         break;
-      case "TIME":
-      // wordt niet ondersteund dus ook niet geexporteerd
-      this.data[i].Type = "Not supported"
+      case `STRING(${finalNumber})` :
+      this.data[i].Type = "str"
+      this.data[i].Width = ""
+      this.data[i].Signed = ""
+      this.data[i].MaxStringLength = finalNumber
+        break;
+      case "USINT":
+      this.data[i].Type = "int"
+      this.data[i].Width = 8
+      this.data[i].Signed = "FALSE"
         break;
       case "UINT":
       this.data[i].Type = "int"
-      this.data[i].Width = 16
+      this.data[i].Width = 8
       this.data[i].Signed = "FALSE"
         break;
       case "WORD":
@@ -144,13 +191,25 @@ export class AppComponent {
       this.data[i].Width = 16
       this.data[i].Signed = "FALSE"
         break;
-      case "OperationMode":
+      case "DWORD":
       this.data[i].Type = "int"
-      this.data[i].Width = 16
-      this.data[i].Signed = "TRUE"
+      this.data[i].Width = 32
+      this.data[i].Signed = "FALSE"
+        break;
+        case "UINT":
+      this.data[i].Type = "int"
+      this.data[i].Width = 32
+      this.data[i].Signed = "FALSE"
+        break;
+      case "LWORD":
+      this.data[i].Type = "int"
+      this.data[i].Width = 64
+      this.data[i].Signed = "FALSE"
         break;
       default:
-      window.alert("Error: Unknown variable found")
+      console.log(this.data[i]);
+      
+        this.data[i].Type = "Not supported"
         break;
     }
   }
@@ -175,8 +234,10 @@ export class AppComponent {
   };
   Download(){
     // create the address before the download
+    console.log(this.data);
+    
     let CSVfile = this.data.map(a => Object.assign({}, a))
-    console.log(CSVfile);
+    
     
     let attributes = "@attributes"
     if (this.json.Symbolconfiguration.NodeList.Node.Node instanceof Array) {
@@ -192,11 +253,17 @@ export class AppComponent {
         CSVfile[i].Address = `ns=${this.Address.value.Namespace};${this.Address.value.IdentifierType}=${this.Address.value.Identifier}.${this.json.Symbolconfiguration.NodeList.Node[attributes].name}.${this.json.Symbolconfiguration.NodeList.Node.Node[attributes].name}.${this.json.Symbolconfiguration.NodeList.Node.Node.Node[i][attributes].name}`
       }
     }
+    console.log(CSVfile);
+
     for (let i = 0; i < CSVfile.length; i++) {
       if (CSVfile[i].Type == "Not supported") {
         CSVfile.splice(i,1)
+        i--
+        console.log(CSVfile[i], "DELETED");
       }
     }
+    console.log(CSVfile);
+    
     new Angular5Csv(CSVfile, "IXON datasource", this.options)
   }
 }
